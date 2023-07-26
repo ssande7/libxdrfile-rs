@@ -1,0 +1,3 @@
+[submodule "libxdrfile"]
+	path = libxdrfile
+	url = https://github.com/wesbarnett/libxdrfile/
