@@ -1,6 +1,6 @@
 use std::ffi::{c_char, c_int, c_float};
 
-use crate::xdrfile::*;
+use crate::xdr::*;
 
 #[link(name="xdrfile")]
 extern "C" {

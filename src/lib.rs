@@ -1,10 +1,20 @@
 use std::{marker::PhantomData, ffi::{CStr, c_char, c_int, c_float}, mem::MaybeUninit, ptr::addr_of_mut};
 
-pub mod xdrfile;
+pub mod xdr;
 pub mod xtc;
 
-use xdrfile::*;
+use xdr::*;
 use xtc::*;
+
+pub mod prelude {
+    pub use super::xdr::XDRStatus;
+    pub use super::xdr::rvec;
+    pub use super::xdr::matrix;
+    pub use super::xdr::DIM;
+    pub use super::XDRFile;
+    pub use super::XTCFrame;
+    pub use super::access_mode;
+}
 
 pub struct XDRFile<MODE: XDRAccessMode> { handle: *mut XDRFILE,
     _mode: PhantomData<MODE>,
@@ -206,13 +216,12 @@ mod seal {
 mod tests {
     use std::ffi::{c_char, CString, c_int, c_float};
     use std::mem::MaybeUninit;
-
-    use crate::access_mode;
-    use super::*;
+    use super::prelude::*;
 
     #[test]
     /// Test the safe wrapper for reading/writing xtc files
     fn test_xtc_wrapper() -> Result<(), XDRStatus> {
+
         let test_file = CString::new("tests/test_wrapper.xtc").unwrap();
         let nframes = 13;
         let natoms1 = 173;
@@ -281,6 +290,9 @@ mod tests {
     #[test]
     /// Transcribed from libxdrfile/src/tests/test.c
     fn test_xtc() {
+        use super::xdr::*;
+        use super::xtc::*;
+
         let test_file = CString::new("tests/test.xtc").unwrap();
         let nframes: c_int = 13;
         let natoms1: c_int = 173;
