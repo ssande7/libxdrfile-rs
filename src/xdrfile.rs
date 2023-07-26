@@ -1,6 +1,5 @@
 use std::ffi::{c_char, c_int, c_uint, c_uchar, c_short, c_ushort, c_float, c_double};
 
-
 // NOTE: once `extern_types` feature is enabled, this could be `extern "C" type XDRFILE`
 #[repr(C)]
 pub struct XDRFILE {
@@ -32,6 +31,7 @@ pub const DIM: usize = 3;
 
 #[allow(non_camel_case_types)]
 #[repr(C)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct rvec(pub [c_float; DIM]);
 
 impl rvec {
@@ -42,6 +42,7 @@ impl rvec {
 
 #[allow(non_camel_case_types)]
 #[repr(C)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct matrix(pub [[c_float; DIM]; DIM]);
 
 impl matrix {
@@ -52,7 +53,8 @@ impl matrix {
 
 #[allow(non_camel_case_types)]
 #[repr(C)]
-pub struct mybool(pub c_int);
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+pub enum mybool {FALSE, TRUE}
 
 #[link(name="xdrfile")]
 extern "C" {
