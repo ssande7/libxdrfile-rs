@@ -1,4 +1,8 @@
-use std::{marker::PhantomData, ffi::{CStr, c_char, c_int, c_float}, mem::MaybeUninit, ptr::addr_of_mut};
+use std::{
+    marker::PhantomData,
+    ffi::{CStr, c_char, c_int, c_float},
+    mem::MaybeUninit, ptr::addr_of_mut
+};
 
 pub mod xdr;
 pub mod xtc;
@@ -16,7 +20,8 @@ pub mod prelude {
     pub use super::access_mode;
 }
 
-pub struct XDRFile<MODE: XDRAccessMode> { handle: *mut XDRFILE,
+pub struct XDRFile<MODE: XDRAccessMode> {
+    handle: *mut XDRFILE,
     _mode: PhantomData<MODE>,
 }
 
@@ -87,7 +92,15 @@ impl XDRFile<access_mode::Read> {
         let mut natoms = MaybeUninit::<c_int>::uninit();
         let mut step = MaybeUninit::<c_int>::uninit();
         let mut time = MaybeUninit::<c_float>::uninit();
-        match unsafe { xtc_header(self.handle, natoms.as_mut_ptr(), step.as_mut_ptr(), time.as_mut_ptr(), mybool::TRUE) } {
+        match unsafe {
+            xtc_header(
+                self.handle,
+                natoms.as_mut_ptr(),
+                step.as_mut_ptr(),
+                time.as_mut_ptr(),
+                mybool::TRUE
+            )
+        } {
             XDRStatus::exdrOK => (),
             e => return Err(e),
         }
@@ -136,6 +149,7 @@ impl XDRFile<access_mode::Read> {
             let f = frame.as_mut_ptr();
             addr_of_mut!((*f).sim_box).write(matrix::new());
             addr_of_mut!((*f).x).write(Vec::with_capacity(natoms));
+            (*f).x.set_len(num_atoms as usize);
             read_xtc(
                 self.handle,
                 num_atoms,
